@@ -2,7 +2,7 @@
 
 ## Description
 
-The aim of the thesis is to develop and analyze solvers for Differential Algebraic Equations (DAEs) systems of equations. 
+The aim of the thesis is to develop and analyze solvers for Differential Algebraic Equations (DAEs) systems of equations.
 Through those notebooks, we show how to solve classical physicial, electrical and chemical problems with 4 types of solvers thta we have implemebted or modified.
 
 ## Usage
@@ -12,8 +12,11 @@ Radau will achieve a high accuracy but may be solwer in some cases whereas Rosen
 
 ## Current examples
 
-- The simple pendulum problem (`pendulum.ipynb`) shows how to deal with a high index DAEs system. Many constrained mechanical problems 
-are naturally described by a system of index 3 DAEs.
+- The simple pendulum problem (`pendulum.ipynb`) shows how to deal with a high index DAEs system. Many constrained mechanical problems
+are naturally described by a system of index 3 DAEs. A robotic manipulator of 2 linked arms is also a good example of a high index DAEs system and is described in `robot.ipynb`.
+- `transistor.ipynb` shows how to model a transistor amplifier with a index 1 DAEs system. We show it suffices to write the basic law of electricity to solve the problem unlike the ODEs form which must be derived by mathematical developments.
+- `robertson.ipynb` shows how to solve the Robertson problem with a index 1 DAEs system. This problem is a stiff one and the solvers can be compared based on their ability to solve stiff problems.
+- `cstr.ipynb` shows how to solve a CSTR problem with a index 1 DAEs system. The CSTR is controlled by a PID controller.
 
 ## Structure
 
