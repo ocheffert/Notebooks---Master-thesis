@@ -29,7 +29,7 @@ class SABMScipy(OdeSolver):
                                              self.rtol, self.atol)
         else:
             self.h_abs = validate_first_step(first_step, t0, t_bound)
-
+        
         # bashforth coefficients
         self.B = [[1, 0, 0, 0, 0, 0],
                   [3/2, -1/2, 0, 0, 0, 0],
@@ -152,6 +152,8 @@ class SABMScipy(OdeSolver):
 
     def Semi_Implicit_Adams_Bashforth_Moulton(self):
         y_p, x_p = self.Explicit_Adams_Bashforth()
+        if y_p is False:
+            return (y_p, x_p, False)
         h = self.h_abs
         p = self.p
         M = self.M[p-1]
@@ -161,7 +163,7 @@ class SABMScipy(OdeSolver):
             def equations(z):
                 P = np.concatenate((y_new[0:i], z, y_p[i+1:]), axis=None)
                 res = y_new[i] + h*direction*M[0] * \
-                    self.f(self.t+h * self.direction, P, x_p)[i]
+                    self.f(self.t+h * direction, P, x_p)[i]
                 for j in range(1, p):
                     res += h*direction*M[j]*self.prev_f_y[p-j][i]
                 return z - res
@@ -178,7 +180,9 @@ class SABMScipy(OdeSolver):
                 return (False, "The minimal step size is reached. The method doesn't converge.", None)
 
         error = max(np.abs(y_new - y_p))
-
+        
+        def equations(z):
+            return self.g(self.t + h*self.direction, y_new, z)
         (x_new, dic, flag, message) = fsolve(equations, x0=x_p, xtol=self.rtol, full_output=1)
         if flag != 1: 
             return (False, "Solving the constraints in corrector fail to converge.", False)
