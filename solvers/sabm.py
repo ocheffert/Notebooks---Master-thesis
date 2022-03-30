@@ -126,7 +126,12 @@ class SABM(OdeSolver):
         self.rtol, self.atol = validate_tol(rtol, atol, num_diff)
 
         if first_step is None:
-            self.h_abs = select_initial_step(f, self.t, self.y, f0,
+            if self.ode:
+                self.h_abs = select_initial_step(fun , self.t, self.y, f0,
+                                             self.direction, 1,
+                                             self.rtol, self.atol)
+            else:
+                self.h_abs = select_initial_step(lambda t,y: fun(t,y,y0[num_diff:]) , self.t, self.y[:num_diff], f0,
                                              self.direction, 1,
                                              self.rtol, self.atol)
         else:
@@ -319,7 +324,7 @@ class SABM(OdeSolver):
             elif error > self.atol[i] and h < MIN_H:
                 return (False, "The minimal step size is reached. The method doesn't converge.", None)
 
-        error = np.abs((y_new - y_p))
+        error = np.abs(y_new - y_p)
         if self.ode:
             return (y_new, None, error)
 
