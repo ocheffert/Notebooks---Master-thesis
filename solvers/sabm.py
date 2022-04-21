@@ -39,6 +39,10 @@ class SABM(OdeSolver):
 
     Can not be applied in the complex domain.
 
+    Note that the nfev is over evaluated. Most of the evaluations are
+    done by the constraints (function gun). This may be not efficient if the
+    constraints are difficult to solve.
+
     Parameters
     ----------
     fun : callable
@@ -247,7 +251,7 @@ class SABM(OdeSolver):
         if flag != 1:
             return (False, "Solving the constraints fail to converge.")
         self.nfev += dic["nfev"]
-
+        
         return (True, x)
 
     def Explicit_Adams_Bashforth(self):
@@ -280,14 +284,15 @@ class SABM(OdeSolver):
             P = np.concatenate((y_new[0:i], y_p[i:]), axis=None)
             y_new[i] += h*direction*coeff[0] * \
                 self.f(self.t+h*direction, P, x_p)[i]
+            self.nfev += 1
             for j in range(1, p):
                 y_new[i] += h*direction*coeff[j]*self.prev_f_y[p-j][i]
 
             error = abs(y_new[i] - y_p[i])
-            if error > self.atol[i] and h > MIN_H:
+            if error > self.atol[i] + self.rtol*y_new[i] and h > MIN_H:
                 self.h_abs = h/2
                 return self.Semi_Explicit_Adams_Bashforth_Moulton()
-            elif error > self.atol[i] and h < MIN_H:
+            elif error > self.atol[i] + self.rtol*y_new[i] and h < MIN_H:
                 return (False, """The minimal step size is reached. The method
                         doesn't converge.""", None)
 
@@ -325,10 +330,10 @@ class SABM(OdeSolver):
                 error = self.atol[i] + 1
             else:
                 error = abs(y_new[i] - y_p[i])
-            if error > self.atol[i] and h > MIN_H:
+            if error > self.atol[i] + self.rtol*y_new[i] and h > MIN_H:
                 self.h_abs = h/2
                 return self.Semi_Implicit_Adams_Bashforth_Moulton()
-            elif error > self.atol[i] and h < MIN_H:
+            elif error > self.atol[i] + self.rtol*y_new[i] and h < MIN_H:
                 return (False, """The minimal step size is reached. The method
                         doesn't converge.""", None)
 
