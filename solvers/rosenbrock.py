@@ -1,3 +1,9 @@
+"""
+This DAE solver is a modification of https://github.com/YuanlongHuang/NNEIT/blob/main/ROSsolver_e.py
+which is a Python traduction of the original Fortran Code.
+This modification allows non autonomous ODEs as well as DAEs
+"""
+
 from collections import deque
 import numpy as np
 from scipy.optimize import fsolve
