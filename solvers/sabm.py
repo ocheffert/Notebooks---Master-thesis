@@ -67,7 +67,7 @@ class SABM(OdeSolver):
         Default is ``Explicit``.
     order : int, optional
         Choose the order of the method. Default is 2. The order is bounded by
-        ``MAX_ORDER`` which is egal to 5.
+        ``MAX_ORDER`` which is equal to 5.
     num_diff : int, optional
         The number of differential variables. Must be set at 'n' for a DAE.
     max_step : float, optional
@@ -201,7 +201,7 @@ class SABM(OdeSolver):
         else:
             return False, "Error mode. Need 'Implicit' or 'Explicit' for mode"
 
-        if y_new is False:
+        if y_new is False: 
             return False, x_new
 
         h = self.h_abs
@@ -280,6 +280,7 @@ class SABM(OdeSolver):
             P = np.concatenate((y_new[0:i], y_p[i:]), axis=None)
             y_new[i] += h*direction*coeff[0] * \
                 self.f(self.t+h*direction, P, x_p)[i]
+            self.nfev += 1
             for j in range(1, p):
                 y_new[i] += h*direction*coeff[j]*self.prev_f_y[p-j][i]
 
@@ -290,7 +291,7 @@ class SABM(OdeSolver):
             elif error > self.atol[i] + self.rtol*abs(y_new[i]) and h < MIN_H:
                 return (False, """The minimal step size is reached. The method
                         doesn't converge.""", None)
-
+                
         error = np.abs(y_new - y_p)
         if self.ode:
             return (y_new, None, error)
